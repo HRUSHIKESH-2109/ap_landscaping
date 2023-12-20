@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ap_landscaping/models/providerinfo.dart';
 import 'package:multiselect/multiselect.dart';
+import 'package:http/http.dart' as http;
+import 'config.dart';
 
 class ProviderSignUp extends StatefulWidget {
   const ProviderSignUp({super.key});
@@ -275,6 +278,55 @@ class PaymentDetailsPage extends StatefulWidget {
 
 class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
   final _formKey = GlobalKey<FormState>();
+
+  void pSignup(providerInfo provider_info) async {
+    var regBody = {
+        "username" : provider_info.username,
+        "email" : provider_info.email,
+            "mobilenumber": provider_info.mobile_number,
+            "address": provider_info.address,
+            "carddetails": provider_info.card_details,
+            "cvv": provider_info.cvv,
+            "paypalid": provider_info.paypal_id,
+            "aectransfer": provider_info.aec_transfer,
+            "cardtype": provider_info.card_type,
+            "cardholdersname": provider_info.card_holders_name,
+            "cardnumber": provider_info.card_number,
+            "password": provider_info.password,
+      };
+      var response = await http.post(Uri.parse(providerRegister),
+      headers: {
+          "Content-Type": "application/json"  
+        },
+      body: jsonEncode(regBody)
+      );
+      // var jsonResponse = jsonDecode(response.body);
+      if(response.statusCode == 201){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CongratsPage()),
+                      );
+      }else{
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              // content: Text(err.message),
+              actions: [
+                TextButton(
+                  child: const Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+  }
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -294,7 +346,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Name of the Bank',
@@ -309,7 +361,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Account number',
@@ -325,7 +377,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Paypal ID',
@@ -340,7 +392,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Card Details',
@@ -355,7 +407,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'AEC Transfer',
@@ -369,7 +421,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Type of card',
@@ -384,7 +436,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Card Holder Name',
@@ -400,7 +452,7 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 50),
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Card Number',
@@ -414,18 +466,30 @@ class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
                       value!.isEmpty ? 'Please enter the card number' : null,
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 5, 30, 20),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'CVV',
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onSaved: (value) => widget.provider_info.cvv =
+                      int.tryParse(value ?? '0') ?? 0,
+                  validator: (value) => value!.isEmpty
+                      ? 'Please enter cvv'
+                      : null,
+                ),
+              ),
               ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
 
                       // save the details
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CongratsPage()),
-                      );
+                      pSignup(widget.provider_info);
                     }
                   },
                   child: const Text('Next'))
