@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:ap_landscaping/providerHome.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'config.dart';
 
 class ProviderSignIn extends StatefulWidget {
@@ -15,21 +16,30 @@ class _ProviderSignInState extends State<ProviderSignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   void pLogin() async {
     var pBody = {
       "email": emailController.text,
       "password": passwordController.text
     };
-    var response =
-        await http.post(Uri.parse(providerLogin),
-        headers: {
-          "Content-Type": "application/json"  
-        }, body: jsonEncode(pBody));
+    var response = await http.post(Uri.parse(providerLogin),
+        headers: {"Content-Type": "application/json"}, body: jsonEncode(pBody));
     var jsonResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
       var myToken = jsonResponse['token'];
-      // prefs.setString('token', myToken);
+      prefs.setString('token', myToken);
+      prefs.setString('userOrProvider', 'provider');
       Navigator.push(
           context,
           MaterialPageRoute(
