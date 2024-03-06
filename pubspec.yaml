@@ -35,6 +35,7 @@ dependencies:
   http:
   shared_preferences: 
   jwt_decoder:
+  google_sign_in: ^5.0.7 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

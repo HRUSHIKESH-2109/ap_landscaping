@@ -19,27 +19,29 @@ class providerInfo {
   String bank_name;
   String account_nummber;
   List<String> services;
+  String google_id;
 
-  providerInfo(
-      {this.username = '',
-      this.email = '',
-      this.mobile_number = '',
-      this.password = '',
-      this.address = '',
-      this.card_details = '',
-      this.cvv = 0,
-      this.paypal_id = '',
-      this.aec_transfer = '',
-      this.card_type = '',
-      this.card_holders_name = '',
-      this.card_number = '',
-      this.qualifications = '',
-      this.years_of_experience = 0,
-      this.bio = '',
-      this.bank_name = '',
-      this.account_nummber = '',
-      List<String>? services,
-      }): services = services ?? [];
+  providerInfo({
+    this.username = '',
+    this.email = '',
+    this.mobile_number = '',
+    this.password = '',
+    this.address = '',
+    this.card_details = '',
+    this.cvv = 0,
+    this.paypal_id = '',
+    this.aec_transfer = '',
+    this.card_type = '',
+    this.card_holders_name = '',
+    this.card_number = '',
+    this.qualifications = '',
+    this.years_of_experience = 0,
+    this.bio = '',
+    this.bank_name = '',
+    this.google_id = '',
+    this.account_nummber = '',
+    List<String>? services,
+  }) : services = services ?? [];
 
   Map<String, dynamic> toJson() => {
         'username': username,
@@ -59,6 +61,7 @@ class providerInfo {
         'bio': bio,
         'bankname': bank_name,
         'account_number': account_nummber,
-        'services': services
+        'services': services,
+        'google_id': google_id
       };
 }
